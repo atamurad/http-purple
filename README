@@ -1,0 +1,40 @@
+http-purple 
+===========
+  This is HTTP gateway software to access multiple IM networks, based on 
+libpurple - multiprotocol IM client library. HTTP requests are handled by 
+Tornado - scalable event- web server. 
+
+http-purple is licensed under GNU General Public License v2.
+
+Author: Atamurad Hezretkuliyev <atamyrat@gmail.com>
+
+
+Documentation
+=============
+For API protocol specification, see apidoc.html under the docs/ directory.
+
+Simple tutorial on how to build echo bot with PHP is also provided 
+with complete source code.
+
+
+Demo
+====
+Web-based IM client that uses http-purple on backend is running at 
+  http://mccafe.atamurad.com/ 
+
+Please note that traffic is not encrypted and your messages are
+transmitted in plain text.
+
+
+Build
+=====
+You need to have Tornado and libpurple installed.
+  $ run make
+  $ python server.py
+
+
+Changelog
+=========
+0.1 (Dec 3, 2009):
+ * Initial release
+

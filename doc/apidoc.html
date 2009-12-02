@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>API specs</title>
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/text.css" />
+		<link rel="stylesheet" href="css/960.css" />
+		<link rel="stylesheet" href="css/apiIM.css" />
+	</head>
+	<body>
+		<div class="container_16" id="page">
+      
+			<div class="clear"></div>
+		<div class="grid_10">
+        <div id="content">
+          <h1>API Specifications	[verion 0.1]</h1>
+
+          <div class="grid_9">
+          <div class="grid_3">
+          <h2>Methods</h2>
+          <ul>
+            <li><a href='#'>login</a></li>
+            <li><a href='#'>logout</a></li>
+            <li><a href='#'>get_buddies</a></li>
+            <li><a href='#'>change_status</a></li>
+            <li><a href='#'>send_im</a></li>
+          </ul>
+          </div>
+
+          <div class="grid_3">
+          <h2>Callbacks</h2>
+          <ul>
+            <li><a href='#'>connected </a></li>
+            <li><a href='#'>connection_error </a></li>
+            <li><a href='#'>disconnected </a></li>
+            <li><a href='#'>message </a></li>
+            <li><a href='#'>buddy_status_changed </a></li>
+            <li><a href='#'>buddy_signed_on </a></li>
+            <li><a href='#'>buddy_signed_off </a></li>
+            <li><a href='#'>buddy_icon</a></li>
+          </ul>
+        </div>
+
+<!--        <div class="grid_2">
+          <h2>Protocols</h2>
+          <ul>
+            <li>skype</li>
+            <li>msn</li>
+            <li>yahoo</li>
+            <li>aim</li>
+            <li>jabber</li>
+          </ul>
+        </div> -->
+        </div>
+
+        <div class="clear"></div>
+
+        <h2>Overview</h2>
+
+        <p>
+        Communication between your application and our service is done via HTTP protocol.        
+        
+        There are two types of functions called "Methods" and "Callbacks", differentiated by the caller of the function.
+
+        Methods are functions called by your application and handled by our servers. 
+
+        Callbacks are handled by your application and called by our server on IM event occurence (i.e. buddy signs on).
+        </p>
+        <p>
+        Applications are authenticated by APIKEY, which is generated for you upon registration. You also need to set Callback URL on your <a href='settings.php'>account settings</a> page.<br><br>
+
+        All strings are UTF-8 encoded.</p> 
+
+          <h2>Methods</h2>
+          To call a function, you must submit HTTP POST request to the server. <br> API URL is <a>http://apiim01.atamurad.com/api</a><br>
+          
+          Following POST variables must be submitted for all methods:<br>
+          <table>
+            <tr><th>Variable</th><th>Description</th></tr>
+            <tr><td>apikey </td><td>  Applications API key </tr> </tr>
+            <tr><td>method</td>  <td>Method name </td> </tr>
+            <tr><td>prpl</td>  <td> IM Protocol identifier. <br>(skype, msn, yahoo, jabber, aim) </td> </tr>
+            <tr><td>account</td>  <td> User account. Depends on IM protocol used. </td> </tr>
+          </table>
+          <h2>Return values</h2>
+          Results of method calls are returned in JSON-encoded array. Array structure depends on each method called. For error checking purposes, there is 'result' variable in all returned results. It is boolean variable and can be either "Success" or "Error". In case of error, additional information will be provided in 'error_msg'.
+
+          <br><br>
+          <h2>Method list</h2>
+          <br> 
+          <b>login</b> - Login to IM network.<br>
+          This method initiates connection to IM server. When connection is successfully established, connected event will be sent to your application. 
+          If login fails for some reason, connection_error will be sent.
+          <br><b>Arguments: </b> <br>
+          password - Password for IM account in clear text <br>
+          <b>Returns: </b> <br>
+          result: "Success" - Connection to IM server initiated<br>
+          result: "Error" - See error_msg for details.
+          <br><br>
+
+          <b>logout</b> - Logout of IM network.<br>
+          Disconnect from IM server. 
+          <br><b>Arguments: </b> None <br>
+          <b>Returns: </b><br> result: "Error" if account it not connected yet, otherwise "Success" 
+          <br><br>
+
+          <b>get_buddies</b> - Retrieve contact list of account.<br>
+          To call this method, your account must be already connected to server.
+          <br><b>Arguments: </b> None <br>
+          <b>Returns: </b>
+          <br> result: "Error" if account it not connected yet, otherwise "Success"
+          <br> buddy_list: List of contacts details. Each contact is tuple in form (account, nick)
+          <br><br>
+
+          <b>change_status</b> - Change status of account<br>
+          <b>Arguments: </b> <br>
+          status - Status type, i.e 'away', 'invisible', 'dnd', 'available'. Possible values depends on protocol used. <br>
+          message - Status message <br>
+          <b>Returns: </b> <br>
+          result: "Error" if account is not connected yet or status type is not supported by protocol, otherwise "Success"
+          <br><br>
+
+          <b>send_im</b> - Send message <br>
+          <b>Extra arguments: </b> <br>
+          to - Message recepient account<br>
+          message - Text message to send. Common markup code is not supported yet. <br>
+          <b>Returns: </b> <br>
+          result: "Success" if message is sent to the user. 
+          <br><br>
+
+
+          <h2>Sample calls</h2>
+           Login:
+          <pre>
+POST /api HTTP/1.1
+Host: apiim01.atamurad.com:80
+User-Agent: YourApplication/1.0
+Content-Type: application/x-www-form-urlencoded
+
+apikey=1234&method=login&prpl=skype&account=echo123&password=test</pre>
+          Response body:
+          <pre>{"result": "Success"}</pre>
+
+        
+          Invalid call, note that prpl is skype2, not skype:
+          <pre>
+POST /api HTTP/1.1
+Host: apiim01.atamurad.com:80
+User-Agent: YourApplication/1.0
+Content-Type: application/x-www-form-urlencoded
+
+apikey=1234&method=login&prpl=skype2&account=echo123&password=test</pre>
+          Response body:
+          <pre>{"result": "Error", "error_msg": "Invalid argument: PRPL"}</pre>
+
+          <h2>Error messages</h2>
+          <table>
+            <tr><th>Error message</th><th>Description</th></tr>
+            <tr><td>Invalid argument: X</td>  <td> Argument X is either missing or invalid </td> </tr>
+            <tr><td>Account not connected</td>  <td>  </td> </tr>
+          </table>
+
+          <h2>Callback</h2>
+          After successful login, connection is kept alive and connected. When IM account receives message or notification, it is forwarded to your applciation immedietly. Event details are sent to your applciation's Callback URL via HTTP POST. <br>
+
+          <br>Following POST variables are submitted for all events:<br>
+          <table>
+            <tr><th>Variable</th><th>Description</th></tr>
+            <tr><td>apikey </td><td>  Applications API key </tr> </tr>
+            <tr><td>event</td>  <td>Event name </td> </tr>
+            <tr><td>prpl</td>  <td> IM Protocol identifier </td> </tr>
+            <tr><td>account</td>  <td> User account. Depends on IM protocol used. </td> </tr>
+          </table>
+ 
+
+          <br>Example event sent to the Callback URL:
+          <pre>
+POST / HTTP/1.1
+User-Agent: Mozilla/5.0 (compatible; pycurl)
+Host: yourserver.com:9080
+Accept: */*
+Accept-Encoding: gzip,deflate
+Content-Length: 68
+Content-Type: application/x-www-form-urlencoded
+
+prpl=msn&apikey=1234&event=connected&user=atamyrat_ioi%40hotmail.com</pre>
+
+
+          <h2>Event list</h2>
+
+          <br><b>connected</b> <br>
+          Additional arguments: None <br>
+
+          <br><b>connection_error</b> <br>
+          Additional arguments: <br>
+          reason - <br>
+          
+          <br><b>disconnected</b> <br>
+          Additional arguments: <br>
+          reason - <br>
+          
+          <br><b>message</b> <br>
+          Additional arguments:<br>
+          from - Sender's account <br>
+          message - Text message received.<br>
+          timestamp - UNIX timestamp of received time<br>
+          
+          <br><b>buddy_signed_on</b> <br>
+          Additional argument: <br>
+          buddy - Account name of buddy<br>
+
+          <br><b>buddy_signed_off</b> <br>
+          Additional argument: <br>
+          buddy - Account name of buddy<br>
+
+          <br><b>buddy_status_changed</b> <br>
+          Additional arguments: <br>
+          buddy - Account name of buddy<br>
+          status - Status type of buddy<br>
+          message - Status message of buddy<br>
+
+          <br><b>buddy_icon</b> <br>
+          Additional arguments: <br>
+          buddy - Account name of buddy<br>
+          url - URL address of buddy's icon<br>
+
+        </div>
+
+
+					
+			</div>
+      
+		<div class="clear"></div>
+		</div>
+	</body>
+</html>

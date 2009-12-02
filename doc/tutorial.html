@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>PHP-EchoBot tutorial</title>
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/text.css" />
+		<link rel="stylesheet" href="css/960.css" />
+		<link rel="stylesheet" href="css/apiIM.css" />
+	</head>
+	<body>
+    <div class="container_16" id="page">
+
+			<div class="clear"></div>
+		<div class="grid_10">
+        <div id="content">
+<h1>Simple APIIM tutorial - EchoBot</h1>
+
+<p>EchoBot is simple bot that connects to Google Talk!, changes it's status to away with message 'EchoBot running'. When someone sends a message to bot, it replies back to the sender with message 'Hello, [name]. You just said [message]'.<p>
+
+<p>We will use PHP and CURL to send HTTP requests. Let's start with our login code. First, args array and curl is initialized, and then we send request. After that JSON output is decoded.</p>
+
+startbot.php:
+<div class="php" style="font-family:monospace;color: #006; border: 1px solid #d0d0d0; background-color: #f0f0f0;"><span style="color: #000000; font-weight: bold;">&lt;?php</span> <br />
+<br />
+<span style="color: #000088;">$args</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/array"><span style="color: #990000;">array</span></a><span style="color: #009900;">&#40;</span><br />
+&nbsp; <span style="color: #0000ff;">'method'</span> &nbsp; &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'login'</span><span style="color: #339933;">,</span><br />
+&nbsp; <span style="color: #0000ff;">'apikey'</span> &nbsp; &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'[API KEY]'</span><span style="color: #339933;">,</span><br />
+&nbsp; <span style="color: #0000ff;">'prpl'</span> &nbsp; &nbsp; &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'jabber'</span><span style="color: #339933;">,</span><br />
+&nbsp; <span style="color: #0000ff;">'account'</span> &nbsp; <span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'&lt;gtalk_username&gt;@gmail.com'</span><span style="color: #339933;">,</span><br />
+&nbsp; <span style="color: #0000ff;">'password'</span> &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'&lt;password&gt;'</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<br />
+<span style="color: #000088;">$url</span> <span style="color: #339933;">=</span> <span style="color: #0000ff;">'http://apiim01.atamurad.com/api'</span><span style="color: #339933;">;</span><br />
+<br />
+<span style="color: #000088;">$c</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/curl_init"><span style="color: #990000;">curl_init</span></a><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<a style="color: #000060;" href="http://www.php.net/curl_setopt"><span style="color: #990000;">curl_setopt</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #339933;">,</span> CURLOPT_URL<span style="color: #339933;">,</span> <span style="color: #000088;">$url</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<a style="color: #000060;" href="http://www.php.net/curl_setopt"><span style="color: #990000;">curl_setopt</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #339933;">,</span> CURLOPT_POSTFIELDS<span style="color: #339933;">,</span> <span style="color: #000088;">$args</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<a style="color: #000060;" href="http://www.php.net/curl_setopt"><span style="color: #990000;">curl_setopt</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #339933;">,</span> CURLOPT_RETURNTRANSFER<span style="color: #339933;">,</span> 1<span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #000088;">$result</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/json_decode"><span style="color: #990000;">json_decode</span></a><span style="color: #009900;">&#40;</span><a style="color: #000060;" href="http://www.php.net/curl_exec"><span style="color: #990000;">curl_exec</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<a style="color: #000060;" href="http://www.php.net/curl_close"><span style="color: #990000;">curl_close</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<br />
+<span style="color: #666666; font-style: italic;">// print_r($result);</span><br />
+<br />
+<span style="color: #b1b100;">if</span><span style="color: #009900;">&#40;</span> <span style="color: #000088;">$result</span><span style="color: #339933;">-&gt;</span><span style="color: #004000;">result</span> <span style="color: #339933;">==</span> <span style="color: #0000ff;">&quot;Success&quot;</span> <span style="color: #009900;">&#41;</span><br />
+&nbsp; <span style="color: #b1b100;">echo</span> <span style="color: #0000ff;">&quot;Your bot is starting!&quot;</span><span style="color: #339933;">;</span><br />
+<span style="color: #b1b100;">else</span><br />
+&nbsp; <span style="color: #b1b100;">echo</span> <span style="color: #0000ff;">&quot;Error! &quot;</span><span style="color: #339933;">.</span><span style="color: #000088;">$result</span><span style="color: #339933;">-&gt;</span><span style="color: #004000;">error_msg</span><span style="color: #339933;">;</span><br />
+<br />
+<span style="color: #000000; font-weight: bold;">?&gt;</span></div>
+
+
+Now we have to write another script to handle events. It must be publicly accessible and Callback URL in <a href='settings.php'>settings</a> must be set to URL address of handler script.
+
+We are interested in only two events: 'connected' and 'message'. When our account is connected to Google Talk!, we will change status text. If we receive IM message, we reply back to sender with echo message.
+
+<div class="php" style="font-family:monospace;color: #006; border: 1px solid #d0d0d0; background-color: #f0f0f0;"><span style="color: #000088;">$event</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'event'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+<br />
+<span style="color: #b1b100;">if</span><span style="color: #009900;">&#40;</span> <span style="color: #000088;">$event</span> <span style="color: #339933;">==</span> <span style="color: #0000ff;">'connected'</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span> <br />
+&nbsp; change_status<span style="color: #009900;">&#40;</span><span style="color: #0000ff;">'away'</span><span style="color: #339933;">,</span> <span style="color: #0000ff;">'EchoBot 1.0 is running! Waiting for your messages :)'</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+<br />
+<span style="color: #b1b100;">if</span><span style="color: #009900;">&#40;</span> <span style="color: #000088;">$event</span> <span style="color: #339933;">==</span> <span style="color: #0000ff;">'message'</span> <span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span> &nbsp; <span style="color: #666666; font-style: italic;">// IM received</span><br />
+<br />
+&nbsp; <span style="color: #000088;">$from</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'from'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+&nbsp; <span style="color: #000088;">$msg</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'message'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; <span style="color: #000088;">$reply</span> <span style="color: #339933;">=</span> <span style="color: #0000ff;">&quot;Hello, &quot;</span><span style="color: #339933;">.</span><span style="color: #000088;">$from</span><span style="color: #339933;">.</span><span style="color: #0000ff;">&quot;! You just said &quot;</span><span style="color: #339933;">.</span><span style="color: #000088;">$msg</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; reply_im<span style="color: #009900;">&#40;</span><span style="color: #000088;">$reply</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+<br />
+&nbsp;</div>
+
+
+reply_im and change_status are simple wrapper functions for call_method.
+<div class="php" style="font-family:monospace;color: #006; border: 1px solid #d0d0d0; background-color: #f0f0f0;"><span style="color: #666666; font-style: italic;">/* Reply to IM message */</span><br />
+<span style="color: #000000; font-weight: bold;">function</span> reply_im<span style="color: #009900;">&#40;</span><span style="color: #000088;">$msg</span><span style="color: #009900;">&#41;</span><br />
+<span style="color: #009900;">&#123;</span><br />
+&nbsp; <span style="color: #000088;">$args</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/array"><span style="color: #990000;">array</span></a><span style="color: #009900;">&#40;</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'method'</span> &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'send_im'</span><span style="color: #339933;">,</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'to'</span> &nbsp; &nbsp; &nbsp;<span style="color: #339933;">=&gt;</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'from'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">,</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'message'</span> <span style="color: #339933;">=&gt;</span> <span style="color: #000088;">$msg</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; call_method<span style="color: #009900;">&#40;</span><span style="color: #000088;">$args</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+<br />
+<span style="color: #666666; font-style: italic;">/* Change account status */</span><br />
+<span style="color: #000000; font-weight: bold;">function</span> change_status<span style="color: #009900;">&#40;</span><span style="color: #000088;">$status</span><span style="color: #339933;">,</span> <span style="color: #000088;">$message</span><span style="color: #009900;">&#41;</span><br />
+<span style="color: #009900;">&#123;</span><br />
+&nbsp; <span style="color: #000088;">$args</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/array"><span style="color: #990000;">array</span></a><span style="color: #009900;">&#40;</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'method'</span> <span style="color: #339933;">=&gt;</span> <span style="color: #0000ff;">'change_status'</span><span style="color: #339933;">,</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'status'</span> <span style="color: #339933;">=&gt;</span> <span style="color: #000088;">$status</span><span style="color: #339933;">,</span><br />
+&nbsp; &nbsp; <span style="color: #0000ff;">'message'</span> <span style="color: #339933;">=&gt;</span> <span style="color: #000088;">$message</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; call_method<span style="color: #009900;">&#40;</span><span style="color: #000088;">$args</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+&nbsp;</div>
+
+And here is the last piece of code that sends HTTP requests wiht CURL.
+<div class="php" style="font-family:monospace;color: #006; border: 1px solid #d0d0d0; background-color: #f0f0f0;"><span style="color: #666666; font-style: italic;">// Send HTTP request</span><br />
+<span style="color: #000000; font-weight: bold;">function</span> call_method<span style="color: #009900;">&#40;</span><span style="color: #000088;">$data</span><span style="color: #009900;">&#41;</span> <br />
+<span style="color: #009900;">&#123;</span><br />
+&nbsp; <span style="color: #666666; font-style: italic;">// Copy prpl, account and apikey from request</span><br />
+&nbsp; <span style="color: #000088;">$data</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'prpl'</span><span style="color: #009900;">&#93;</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'prpl'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+&nbsp; <span style="color: #000088;">$data</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'account'</span><span style="color: #009900;">&#93;</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'account'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+&nbsp; <span style="color: #000088;">$data</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'apikey'</span><span style="color: #009900;">&#93;</span> <span style="color: #339933;">=</span> <span style="color: #000088;">$_POST</span><span style="color: #009900;">&#91;</span><span style="color: #0000ff;">'apikey'</span><span style="color: #009900;">&#93;</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; <span style="color: #000088;">$url</span> <span style="color: #339933;">=</span> <span style="color: #0000ff;">'http://apiim01.atamurad.com/api'</span><span style="color: #339933;">;</span><br />
+<br />
+&nbsp; <span style="color: #000088;">$c</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/curl_init"><span style="color: #990000;">curl_init</span></a><span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; <a style="color: #000060;" href="http://www.php.net/curl_setopt"><span style="color: #990000;">curl_setopt</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #339933;">,</span> CURLOPT_URL<span style="color: #339933;">,</span> <span style="color: #000088;">$url</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; <a style="color: #000060;" href="http://www.php.net/curl_setopt"><span style="color: #990000;">curl_setopt</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #339933;">,</span> CURLOPT_POSTFIELDS<span style="color: #339933;">,</span> <span style="color: #000088;">$data</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; <span style="color: #000088;">$result</span> <span style="color: #339933;">=</span> <a style="color: #000060;" href="http://www.php.net/curl_exec"><span style="color: #990000;">curl_exec</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+&nbsp; <a style="color: #000060;" href="http://www.php.net/curl_close"><span style="color: #990000;">curl_close</span></a><span style="color: #009900;">&#40;</span><span style="color: #000088;">$c</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span><br />
+<span style="color: #009900;">&#125;</span><br />
+&nbsp;</div>
+
+<h2>Conclusion</h2>
+This bot will run until you stop it, it is left as an exercise to the reader :-). HINT: Change 'login' to 'logout' in startbot.php and execute it again.
+
+<br><br>
+<h2>Download source code</h2>
+<ul>
+<li><a href='php-echobot.zip'>php-echobot.zip</a></li>
+</ul>
+
+
+
+        </div>
+
+
+					
+			</div>
+		<div class="clear"></div>
+  
+  </div>
+	</body>
+</html>
